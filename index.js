@@ -44,7 +44,7 @@ app.engine('jsx', reactEngine);
 
 /**
  * ===================================
- * Routes
+ * Routes for Artists
  * ===================================
  */
 
@@ -62,76 +62,139 @@ app.get('/', (request, response) => {
 /* === INDEX FEATURE ===
 Build the index feature for artists. 
   - Basically what you want to be able to do is create a route that when called, prints out the artist table as is. */
-app.get('/artists', (req, res) => {
-  let queryString = "SELECT * FROM artists";
-  pool.query(queryString, (errObj, result) => {
-    let obj;
-    if (errObj === undefined) {
-     obj = { data:result.rows }; 
-   } else {
-    console.error("query error:", errorObj.stack);
-    result.send("query error");
-   }
-   response.render("home", obj);
-  });
+app.get('/artists/', (request, response) => {
+  const queryString = "SELECT * FROM artists";
+
+  pool.query(queryString, (errorObj, result) => {
+    if(errorObj) {
+        console.log(errorObj.stack);
+        response.send("query error");
+    } else {
+        const data = { artists: result.rows };
+        response.render( "index", data );
+    }
+  })
 });
+
 
 /* === CREATE FEATURE ===
 Construct a new route that allows the user to create a new entry for an artist's information and add it to the exising lists. */
-app.get('/artist/create', (req, res) => {
-  let obj = {};
-  response.render("create-artist", obj);
+app.get('/artists/new', (request, response) => {
+   response.render("create");
+})
+
+
+app.post('/artists', (request, response) => {
+
+    console.log(request.body);
+    const queryString = "INSERT INTO artists (name, photo_url, nationality) VALUES ($1, $2, $3)";
+
+    const values = [request.body.name, request.body.photo_url, request.body.nationality];
+
+    pool.query(queryString, values, (errorObj, result) => {
+        if(errorObj) {
+            console.log(errorObj.stack);
+            response.send("query error test 3");
+        } else {
+            response.send("A new artist has been added!" + "<br><br><a href=/artists/>Home</a>");
+        }
+    })
+})
+
+/* === EDIT FEATURE ===
+Create a route that allows you to edit existing entries in the database. */
+app.get('/artists/:id/edit', (request, response) => {
+
+    const queryString = "SELECT * FROM artists WHERE id=" + request.params.id;
+
+    pool.query(queryString, (errorObj, result) => {
+        if(errorObj) {
+            console.log(errorObj.stack);
+            response.send("query error test 4");
+        } else {
+            const data = { artist: result.rows }
+            response.render("edit", data );
+        }
+    })
 });
 
-app.post("/artist/create/add", (req, res) => {
-  objToSend = {};
-  console.log(request.body);
-  let queryString = 
-    "INSERT INTO artists" +
-    "(name, photo_url, nationality)" +
-    "VALUES" +
-    "('" +
-    request.body.name +
-    "', '" +
-    request.body.photo_url +
-    "', '" +
-    request.body.nationality +
-    "')";
+ app.put('/artists/:id', (request, response) => {
 
-  pool.query(queryString, (errObj, result) => {
-    if (errObj === undefined) {
-    } else {
-      console.error("query error:", errObj.stack);
-      result.send("query error");
-    }
+        const queryString = "UPDATE artists SET name = $1, photo_url=$2, nationality=$3 WHERE id=$4";
+
+        const values = [request.body.name, request.body.photo_url, request.body.nationality, request.params.id];
+
+        pool.query(queryString, values, (errorObj, result) => {
+            if(errorObj) {
+                console.log(errorObj.stack);
+                response.send("query error test 5");
+            } else {
+                response.send("Artist has been edited!" + "<br><br><a href=/artists/>Home</a>");
+            }
+        })
   });
-}) ;
 
 /* === SHOW FEATURE ===
 Construct a route that shows you the details for only a specific artists depending on the entry of their id. */
-app.get('/artists/:id', (req, res) => {
-  const queryString = "SELECT * FROM artists WHERE id = " + request.params.id;
-  pool.query(queryString, (errObj, result) => {
-    let queryString2 = "SELECT * FROM songs WHERE artist_id = " + request. params.id;
-    pool.query(queryString2, (errorObj2, result2) => {
-      let obj = {};
-      if (errorObj2 === undefined) {
-        obj["songs"] = result2.rows;
-      } else {
-        console.error("query error:", errorObj2.stack);
-        result2.send("query error");
-      }
+app.get('/artists/:id', (request, response) => {
+  // query database for all pokemon
 
-      if (errObj === undefined) {
-        obj["artist"] = result.rows;
-      } else {
-        console.error("query error:", errObj.stack);
-        result.send("query error");
-      }
-      response.render("artists", obj);
-    });
-  });
+  const artistId = request.params.id;
+
+  const queryString = "SELECT * FROM artists WHERE id=" + artistId;
+
+  pool.query(queryString, (errorObj, result) => {
+    if(errorObj) {
+        console.log(errorObj.stack);
+        response.send("query error");
+    } else {
+        const data = { artist: result.rows }
+        response.render( "show", data );
+    }
+  })
 });
+
+/* === DELETE FEATURE ===
+Construct a route that allows you to remove entries (instead of just editing existing entries) completely. */
+app.get('/artists/:id/delete',(request, response) => {
+
+    const queryString = "SELECT * FROM artists WHERE id=" + request.params.id;
+
+    pool.query(queryString, (errorObj, result)=> {
+        if(errorObj) {
+            console.log(errorObj.stack);
+            respons.send("query error test 6");
+        } else {
+
+            const data = { artist: result.rows };
+            response.render("delete", data);
+        }
+    })
+});
+
+
+app.delete('/artists/:id', (request, response) => {
+  const queryString = "DELETE from artists WHERE id =" + request.params.id;
+    pool.query(queryString, (errorObj, result) => {
+      if(errorObj) {
+        console.log(errorObj.stack);
+        response.send("query error test 5");
+      } else {
+        response.send("Artist has been deleted!" +"<br><br><a href=/artists/>Home</a>");
+      }
+    })
+});
+
+/**
+ * ===================================
+ * Routes for Songs
+ * ===================================
+ */
+
+/* === TEST ROUTE === */
+app.get('/', (req, res) => {
+  response.render('home');
+})
 
 
 /**
