@@ -26,7 +26,7 @@ class Index extends React.Component {
                 <title>Tunr_Express</title>
             </head>
         <body>
-          <div class="artists">
+          <div class="content">
           <h1 style={{ 'text-decoration': 'underline' }}>Artists!</h1>
           { all_artists }
           </div>

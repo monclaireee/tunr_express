@@ -11,12 +11,15 @@ class Show extends React.Component {
                 <title>Show Page</title>
             </head>
         <body>
-          <div class="artists">
+          <div class="content">
           <h1>{ this.props.artist[0].name }</h1>
                 <h2>{ this.props.artist[0].nationality }</h2>
                 <img src={ this.props.artist[0].photo_url } style={{display: 'inline-block', width: '40%', height: '50%'}} />
                 <br/>
-                <a href={`/artists/`} class="btn btn-danger">Back</a>
+                <span>
+                  <a href={`/artists/`} class="btn btn-success">Artists Homepage</a>&nbsp;&nbsp;&nbsp;
+                  <a href={`/songs/`} class="btn btn-primary">Songs Homepage</a>
+                </span>
           </div>
         </body>
       </html>
