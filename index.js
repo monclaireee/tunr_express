@@ -305,6 +305,57 @@ app.get('/songs/:id', (request, response) => {
 
 /**
  * ===================================
+ * Routes for Artists' Songs
+ * ===================================
+ */
+
+// === TEST ROUTE ===
+app.get('/', (req, res) => {
+  response.render('home');
+})
+
+/* === SHOW FEATURE (FIND SONGS FOR SPECIFIC ARTIST) ===
+Create a route that shows you the specific artist's songs. */
+app.get('/artist/:id/songs', (request, response) => {
+  const artistId = request.params.id;
+  const queryString = "SELECT * FROM songs WHERE artist_id=" + artistId;
+  pool.query(queryString, (errorObj, result) => {
+    if(errorObj) {
+      console.log(errorObj.stack);
+      response.send("query error test 7");
+  } else {
+      const data = { songs: result.rows };
+      response.render( "artist_song_list_show", data );
+    }
+  })
+});
+
+/* === CREATE FEATURE (CREATE A NEW SONG FOR AN ARTIST) ===
+Create a route that creates a new entry for an artist's song. */
+app.get('/artist/:id/songs/new', (request, response) => {
+  const artist_id = request.params.id;
+  const data = { idKey : artist_id };
+  response.render("artist_song_list_create", data);
+})
+
+
+app.post('/artist/:id/songs', (request, response) => {
+  const artist_id = request.params.id;
+  console.log(request.body);
+  const queryString = "INSERT INTO songs (title, album, preview_link, artwork, artist_id) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+  const values = [request.body.title, request.body.album, request.body.preview_link, request.body.artwork, artist_id];
+  pool.query(queryString, values, (errorObj, result) => {
+    if(errorObj) {
+      console.log(errorObj.stack);
+      response.send("query error test 3");
+    } else {
+      response.send("A new song has been added for artist with artist_id=" + artist_id + "<br><br><a href=/artists/>Home</a>");
+    }
+  })
+})
+
+/**
+ * ===================================
  * Listen to requests on port 3000
  * ===================================
  */
