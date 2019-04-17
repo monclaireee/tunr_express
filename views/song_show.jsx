@@ -1,6 +1,6 @@
 var React = require("react");
 
-class Show extends React.Component {
+class SongShow extends React.Component {
     render() {
         return (
             <html>
@@ -29,4 +29,4 @@ class Show extends React.Component {
     }
 }
 
-module.exports = Show; 
+module.exports = SongShow; 

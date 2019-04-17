@@ -1,6 +1,6 @@
 var React = require("react");
 
-class Show extends React.Component {
+class ArtistShow extends React.Component {
   render() {
     return (
       <html>
@@ -18,7 +18,8 @@ class Show extends React.Component {
                 <br/>
                 <span>
                   <a href={`/artists/`} class="btn btn-success">Artists Homepage</a>&nbsp;&nbsp;&nbsp;
-                  <a href={`/songs/`} class="btn btn-primary">Songs Homepage</a>
+                  <a href={`/songs/`} class="btn btn-primary">Songs Homepage</a>&nbsp;&nbsp;&nbsp;
+                  <a href={`/artist/${this.props.artistIdKey}/songs`} class="btn btn-info">Songs Made By {this.props.artist[0].name}</a>
                 </span>
           </div>
         </body>
@@ -27,4 +28,4 @@ class Show extends React.Component {
   }
 }
 
-module.exports = Show;
+module.exports = ArtistShow;

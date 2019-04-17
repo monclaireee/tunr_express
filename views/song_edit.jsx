@@ -1,6 +1,6 @@
 var React = require('react');
 
-class Edit extends React.Component {
+class SongEdit extends React.Component {
     render() {
 
         let actionAttribute = `/songs/${this.props.song[0].id}?_method=PUT`;
@@ -35,5 +35,5 @@ class Edit extends React.Component {
     }
 }
 
-module.exports = Edit; 
+module.exports = SongEdit; 
      
